@@ -15,7 +15,7 @@ const MODEL_ID = "@cf/meta/llama-3.1-8b-instruct-fp8";
 
 // Default system prompt
 const SYSTEM_PROMPT =
-	"You are a helpful, friendly assistant. Provide concise and accurate responses.";
+	"Eres un asistente servicial y objetivo. Proporciona respuestas en castellano concisas y precisas.";
 
 export default {
 	/**
@@ -41,11 +41,11 @@ export default {
 			}
 
 			// Method not allowed for other request types
-			return new Response("Method not allowed", { status: 405 });
+			return new Response("Metodo no permitido", { status: 405 });
 		}
 
 		// Handle 404 for unmatched routes
-		return new Response("Not found", { status: 404 });
+		return new Response("No encontrado", { status: 404 });
 	},
 } satisfies ExportedHandler<Env>;
 
@@ -92,9 +92,9 @@ async function handleChatRequest(
 			},
 		});
 	} catch (error) {
-		console.error("Error processing chat request:", error);
+		console.error("Error procesando el requerimiento del chat:", error);
 		return new Response(
-			JSON.stringify({ error: "Failed to process request" }),
+			JSON.stringify({ error: "Falla para procesar el requerimiento" }),
 			{
 				status: 500,
 				headers: { "content-type": "application/json" },
