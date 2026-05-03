@@ -44,6 +44,22 @@ export default {
 			return new Response("Metodo no permitido", { status: 405 });
 		}
 
+		if (url.pathname === "/api/config") {
+			if (request.method === "GET") {
+				return new Response(
+					JSON.stringify({
+						modelId: MODEL_ID,
+						modelName: getModelName(MODEL_ID),
+					}),
+					{
+						headers: { "content-type": "application/json; charset=utf-8" },
+					},
+				);
+			}
+
+			return new Response("Metodo no permitido", { status: 405 });
+		}
+
 		// Handle 404 for unmatched routes
 		return new Response("No encontrado", { status: 404 });
 	},
@@ -101,4 +117,9 @@ async function handleChatRequest(
 			},
 		);
 	}
+}
+
+function getModelName(modelId: string): string {
+	const parts = modelId.split("/");
+	return parts[parts.length - 1] || modelId;
 }

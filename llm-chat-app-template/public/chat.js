@@ -10,15 +10,22 @@ const userInput = document.getElementById("user-input");
 const sendButton = document.getElementById("send-button");
 const typingIndicator = document.getElementById("typing-indicator");
 
+const FALLBACK_MODEL_NAME = "LLM basico";
+
+function buildGreeting(modelName) {
+	return `¡Hola! Soy un chat IA experimental, impulsada por ${modelName}. ¿En que puedo ayudarte hoy?`;
+}
+
 // Chat state
 let chatHistory = [
 	{
 		role: "assistant",
-		content:
-			"¡Hola! Soy un chat IA esperimental, impulsada por LLM básico. ¿En qué puedo ayudarte hoy?",
+		content: buildGreeting(FALLBACK_MODEL_NAME),
 	},
 ];
 let isProcessing = false;
+
+initializeGreeting();
 
 // Auto-resize textarea as user types
 userInput.addEventListener("input", function () {
@@ -36,6 +43,28 @@ userInput.addEventListener("keydown", function (e) {
 
 // Send button click handler
 sendButton.addEventListener("click", sendMessage);
+
+async function initializeGreeting() {
+	try {
+		const response = await fetch("/api/config");
+		if (!response.ok) return;
+
+		const { modelName } = await response.json();
+		if (typeof modelName !== "string" || modelName.length === 0) return;
+
+		const greeting = buildGreeting(modelName);
+		const firstAssistantMessage = chatMessages.querySelector(".assistant-message p");
+		if (firstAssistantMessage) {
+			firstAssistantMessage.textContent = greeting;
+		}
+
+		if (chatHistory[0]?.role === "assistant") {
+			chatHistory[0].content = greeting;
+		}
+	} catch (error) {
+		console.error("No fue posible cargar la configuracion del modelo:", error);
+	}
+}
 
 /**
  * Sends a message to the chat API and processes the response
